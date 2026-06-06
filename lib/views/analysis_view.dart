@@ -137,7 +137,8 @@ class _BudgetAnalysisTab extends StatelessWidget {
                       minHeight: 14,
                       backgroundColor: Colors.grey[200],
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        totalDespesas / (totalReceitas > 0 ? totalReceitas : 1) >
+                        totalDespesas /
+                                    (totalReceitas > 0 ? totalReceitas : 1) >
                                 0.8
                             ? Colors.red
                             : const Color(0xFF2E7D32),
@@ -420,7 +421,7 @@ class _TransactionListTab extends StatelessWidget {
         final isReceita = t.type == TransactionType.receita;
 
         return Dismissible(
-          key: Key(t.id),
+          key: Key((t.id ?? index).toString()),
           direction: DismissDirection.endToStart,
           background: Container(
             alignment: Alignment.centerRight,
@@ -432,7 +433,10 @@ class _TransactionListTab extends StatelessWidget {
             child: const Icon(Icons.delete, color: Colors.white),
           ),
           onDismissed: (_) {
-            financeVM.removeTransaction(t.id);
+            final id = t.id;
+            if (id != null) {
+              financeVM.removeTransaction(id);
+            }
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('${t.description} removido'),
@@ -446,8 +450,9 @@ class _TransactionListTab extends StatelessWidget {
             ),
             child: ListTile(
               leading: CircleAvatar(
-                backgroundColor:
-                    isReceita ? const Color(0xFFE8F5E9) : const Color(0xFFFFEBEE),
+                backgroundColor: isReceita
+                    ? const Color(0xFFE8F5E9)
+                    : const Color(0xFFFFEBEE),
                 child: Icon(
                   isReceita ? Icons.arrow_upward : Icons.arrow_downward,
                   color: isReceita ? const Color(0xFF2E7D32) : Colors.red,
